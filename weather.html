@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #121212;
+        color: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        background-color: #1e1e1e;
+        padding: 20px;
+        border-radius: 10px;
+        width: 400px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+      h1 {
+        margin-bottom: 10px;
+        font-size: 24px;
+      }
+
+      .input-container {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      input [type="text"] {
+        width: 70%;
+        padding: 10px;
+        background-color: #333333;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        outline: none;
+      }
+
+      button {
+        width: 25%;
+        padding: 10px;
+        background-color: #6200ea;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #3700b3;
+      }
+      #weather-info {
+        margin-top: 20px;
+      }
+      .hidden {
+        display: none;
+      }
+
+      #error-message {
+        color: #ff5722;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Weather App</h1>
+      <div class="imput-container">
+        <input type="text" id="city-input" placeholder="Enter Your City" />
+        <button id="get-weather-btn">Get Weather</button>
+      </div>
+      <div class="weather-info" class="hidden">
+        <h2 id="city-name"></h2>
+        <p id="temperature"></p>
+        <p id="description"></p>
+      </div>
+
+      <p id="error-message" class="hidden">
+        City Not Found . Please Try again.
+      </p>
+    </div>
+  </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const cityInput = document.getElementById("city-input");
+      const getWeatherBtn = document.getElementById("get-weather-btn");
+
+      const weatherInfo = document.getElementById("weather-info");
+      const cityName = document.getElementById("city-name");
+
+      const temperature = document.getElementById("temperature");
+      const description = document.getElementById("description");
+      const errorMessage = document.getElementById("error-message");
+
+      const API_KEY = "fc9981bf1b7f2a91bc75b40bf05d8276"; // env variable
+
+      getWeatherBtn.addEventListener("click", async () => {
+        const city = cityInput.value.trim();
+        if (!city) return;
+        // It may throw an error
+        // server and database is always in another continent
+
+        try {
+          const weatherData = await fetchWeatherData(city);
+          displayWeatherData(weatherData);
+        } catch (error) {
+          showError();
+        }
+      });
+
+      async function fetchWeatherData(city) {
+        // get the data
+
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`;
+        const response = await fetch(url);
+        console.log(response);
+        if (!response.ok) {
+          throw new Error("City not found");
+        }
+
+        const data = await response.json();
+        return data;
+      }
+
+      function displayWeatherData(weatherData) {
+        //display
+        console.log(weatherData);
+        const { name, main, weather } = weatherData;
+        cityName.textContent = name;
+
+        temperature.textContent = `Temperature :${main.temp}`;
+        description.textContent = `Weather:${weather[0].description}`;
+
+        // unlock the display
+        weatherInfo.classList.remove("hidden");
+        errorMessage.classList.add("hidden");
+      }
+
+      function showError() {
+        weatherInfo.classList.remove("hidden");
+        errorMessage.classList.add("hidden");
+      }
+    });
+  </script>
+</html>
