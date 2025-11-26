@@ -4,4 +4,5 @@
 
 ##  :zap: API
 
-## I have used weather **https://openweathermap.org/api/one-call-3** api to abstract data 
+## I have used weather **https://openweathermap.org/api/one-call-3** api to abstract data and display in client side
+
